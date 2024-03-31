@@ -5,20 +5,38 @@ import { useNavigate } from 'react-router-dom';
 import { useChatContext } from './ChatContext';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
+import { useGlobal } from '../components/GlobalContext';
 
 const ChatRoomList = (
   // {memberNo }: {memberNo: number }
   ) => {
-    const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
     const { chatRoomId, setChatRoomId } = useChatContext();
     const { chatRoomName, setChatRoomName } = useChatContext();
     const { chattersCount, setChattersCount } = useChatContext();
+    const { chatRooms, setChatRooms } = useChatContext();
     const [clients, setClients] = useState<Client[]>([]);
-    let memberNo = 1;
+    const { user, updateUser } = useGlobal();
     const navigate = useNavigate();
 
     useEffect(() => {
-        getChatRoomList(memberNo)
+      if(user == null){
+        return;
+      }
+        getChatRoomList(user.memberNo)
+        .then(data=>{
+            console.log(data);
+            setChatRooms(data);
+            })
+            .catch(error => {
+              console.error('API 호출 오류:', error);
+            });
+    }, [user]);
+
+    useEffect(() => {
+      if(user == null){
+        return;
+      }
+        getChatRoomList(user.memberNo)
         .then(data=>{
             setChatRooms(data);
             })
@@ -26,6 +44,7 @@ const ChatRoomList = (
               console.error('API 호출 오류:', error);
             });
     }, [chatRoomId]);
+  
 
     useEffect(() => {
       if(chatRooms.length!=0){
@@ -56,11 +75,11 @@ const ChatRoomList = (
   }
 
   const updateLastMessage = (reveivedMessage: Message) => {
-    console.log("updateMessage: " + reveivedMessage.text);
-    let roomToUpdate = chatRooms.find(room=>room.chatRoomId===reveivedMessage.chatRoomId);
-    if (roomToUpdate) {
-      roomToUpdate.latestMessage=reveivedMessage;
-    }
+    // console.log("updateMessage: " + reveivedMessage.text);
+    // let roomToUpdate = chatRooms.find(room=>room.chatRoomId===reveivedMessage.chatRoomId);
+    // if (roomToUpdate) {
+    //   roomToUpdate.latestMessage=reveivedMessage;
+    // }
   }
 
       const handleChatRoomClick = (room: ChatRoom) => {
@@ -74,7 +93,7 @@ const ChatRoomList = (
     return (
       chatRoomId === 0 ?  
         <div
-            style={{padding: '10px'}}
+            // style={{padding: '10px'}}
         >
             {chatRooms.length === 0 ? (
                 <div/>
@@ -87,7 +106,10 @@ const ChatRoomList = (
           <ListItemAvatar>
             <Avatar />
           </ListItemAvatar>
-          <ListItemText primary={room.chatRoomName} secondary={room.latestMessage===null?"":room.latestMessage.text} />
+          <ListItemText primary={room.chatRoomName} 
+          // secondary={room.latestMessage===null?"":room.latestMessage.text} 
+          secondary={""} 
+          />
             {room.unReadCount==0?<div/>:<Badge badgeContent={room.unReadCount} color="primary"/>}
         </ListItem>
       ))}

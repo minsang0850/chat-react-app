@@ -3,6 +3,7 @@ import ChatRoomList from '../components/ChatRoomList';
 import ChatRoomComponent from '../components/ChatRoomComponent';
 import ChatTopBar from '../components/ChatTopBar';
 import { ChatProvider } from '../components/ChatContext';
+import { WebSocketProvider } from '../components/WebSocketContext';
 import '../components/Message.css'; // 스타일 파일을 따로 생성
 
 const ChatApp: React.FC = () => {
@@ -20,6 +21,7 @@ const ChatApp: React.FC = () => {
       // borderRadius: '30px',
       // border: '1px solid black'}}
       >
+        <WebSocketProvider>
         <ChatProvider>
           <ChatTopBar
           visible={isBannerVisible}
@@ -28,6 +30,7 @@ const ChatApp: React.FC = () => {
           <ChatRoomList />
           <ChatRoomComponent />
         </ChatProvider>
+        </WebSocketProvider>
       </div>
   );
 };

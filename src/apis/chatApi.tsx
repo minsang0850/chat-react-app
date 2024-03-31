@@ -7,17 +7,9 @@ export interface ChatRoomWithMessages {
 }
 
 export interface ChatRoom {
-    chatRoomId: number;
-    chatRoomName: string;
-    latestMessage: Message;
-    chattersCount: number;
-    unReadCount: number;
-}
-
-export interface ChatRoomSummary {
   chatRoomId: number;
   chatRoomName: string;
-  latestMessage: LatestMessage;
+  messages: Message[];
   chattersCount: number;
   unReadCount: number;
 }
@@ -43,8 +35,8 @@ export interface Member {
   memberName: string;
 }
 
-interface ChatRoomSummaries{
-  chatRoomSummaries: ChatRoom[];
+export interface ChatRooms{
+  chatRoomDetails: ChatRoom[];
 }
 
 export async function getChatRoomData(chatRoomId:number ,memberNo:number): Promise<ChatRoomWithMessages> {
@@ -60,10 +52,12 @@ export async function getChatRoomData(chatRoomId:number ,memberNo:number): Promi
 
 export async function getChatRoomList(memberNo:number): Promise<ChatRoom[]> {
   try {
-    const response = await axios.get<ChatRoomSummaries>('http://localhost:8080/message/v1/chatRooms'
+    const response = await axios.get<ChatRooms>('http://localhost:8080/message/v1/chatRooms'
     , { params: {memberNo: memberNo}});
-    const data = response.data as ChatRoomSummaries;
-    return data.chatRoomSummaries;
+    const data = response.data as ChatRooms;
+    console.log('data:'+ data)
+    console.log('' + data.chatRoomDetails[0].chatRoomId);
+    return data.chatRoomDetails;
   } catch (error) {
     throw new Error('Fail get room List API call');
   }

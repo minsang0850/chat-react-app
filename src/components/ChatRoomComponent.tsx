@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
-import { useParams } from "react-router-dom";
 import { getChatRoomData,ChatRoom, ChatRoomWithMessages, Message, Member } from '../apis/chatApi';
 import Messages from './Messages';
 import {TextField, Button} from '@mui/material';
 import { useChatContext } from './ChatContext';
-
-interface ChatRoomParams {
-    chatRoomIdString: string;
-    memberNoString: string;
-    [key: string]: string | undefined;
-}
 
 class RequestMessage{
   chatRoomId: number;
@@ -39,7 +32,6 @@ class EnterData {
 
 const ChatRoomComponent: React.FC = () => {
 
-    const params = useParams<ChatRoomParams>();
     const memberNo = 1;
     const { chatRoomId, setChatRoomId } = useChatContext();
     const [stompClient, setStompClient] = useState<Client | null>(null);
@@ -52,18 +44,7 @@ const ChatRoomComponent: React.FC = () => {
     const [chattersCount, setChattersCount] = useState<number>(0);
 
       useEffect(() => {
-        if(chatRoomId===0){
-          return;
-        }
-        getChatRoomData(chatRoomId, memberNo)
-        .then(data=>{
-          console.log(data);
-            setChatRoomData(data);
-        })
-        .catch(error => {
-          console.error('API 호출 오류:', error);
-        });
-
+      
         const socket = new SockJS('http://localhost:8080/stomp/chat');
         const stompClient = new Client({ webSocketFactory: () => socket });
     
@@ -83,6 +64,18 @@ const ChatRoomComponent: React.FC = () => {
         stompClient.activate();
         setStompClient(stompClient);
     
+        if(chatRoomId===0){
+          return;
+        }
+        getChatRoomData(chatRoomId, memberNo)
+        .then(data=>{
+          console.log(data);
+            setChatRoomData(data);
+        })
+        .catch(error => {
+          console.error('API 호출 오류:', error);
+        });
+
         return () => {
           stompClient.deactivate();
         };

@@ -17,7 +17,7 @@ export async function signUp(username:string, id:string, password:string) {
 export async function signIn(id:string, password:string): Promise<Member>  {
     try {
       const response = await axios.post<Member>('http://localhost:8080/sign-in'
-      , { params: {id:id, password:password}});
+      , {memberId:id, password:password});
       const status = response.status;
       if(status!=200) {
         throw Error;
