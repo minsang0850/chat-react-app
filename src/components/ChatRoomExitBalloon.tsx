@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import { Checkbox, FormControlLabel, Typography, Container } from '@mui/material';
 import { exitChatRoom} from '../apis/chatApi';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from '../context/ChatContext';
 
 
 interface ChatRoomExitBalloonProps {
@@ -12,12 +12,13 @@ interface ChatRoomExitBalloonProps {
   }
   
   const ChatRoomExitBalloon: React.FC<ChatRoomExitBalloonProps> = ({ anchorEl, onClose }) => {
-    const { chatRoomId, setChatRoomId } = useChatContext();
+    const {currentChatRoom, setCurrentChatRoom} = useChatContext();
 
     const exitRoom = () => {
-        exitChatRoom(chatRoomId, 1)
+        exitChatRoom(currentChatRoom.chatRoomId, 1)
         .then(()=>{
-        setChatRoomId(0);
+        currentChatRoom.chatRoomId=0;
+        setCurrentChatRoom(currentChatRoom);
         onClose();
       }
         )

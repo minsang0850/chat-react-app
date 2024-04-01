@@ -16,26 +16,15 @@ const Messages = ({ messages, currentMemberNo, chattersCount }: { messages: Mess
   }, [messages]);
 
     let renderMessage = (message: Message) => {
-      console.log("renderMessages");
-      console.log("chattersCount: "+ chattersCount);
         const { chatRoomId, memberNo, memberName, text } = message;
         const isMessageFromMe = currentMemberNo === memberNo;
-        var unreadCount = getUnreadCount(chattersCount, message.readerNos);
         return (
             <div>
-                {isMessageFromMe?<MyMessageBox memberName={memberName} text={text} unreadCount={unreadCount} createDate={message.createdate}/>
+                {isMessageFromMe?<MyMessageBox memberName={memberName} text={text} createDate={message.createdate}/>
                 :<OtherMessage memberName={memberName} text={text}/>}
             </div>
         );
     };
-
-    const getUnreadCount = (chattersCount:number, readerNos: number[]) => {
-      var unreadCount = 0;
-      if(readerNos!=undefined && readerNos.length!=undefined){
-        unreadCount = chattersCount - readerNos.length;
-      }
-      return unreadCount;
-    }
 
     return (
         <div style={{ flex: 1, overflow: 'scroll' }}>
@@ -46,7 +35,7 @@ const Messages = ({ messages, currentMemberNo, chattersCount }: { messages: Mess
 }
 
 
-const MyMessageBox = ({ memberName, text, unreadCount, createDate}: {memberName: string, text: string, unreadCount:number, createDate:string}) => {
+const MyMessageBox = ({ memberName, text, createDate}: {memberName: string, text: string, unreadCount:number, createDate:string}) => {
     return (
         <div style={{
           display: 'flex',
@@ -56,7 +45,7 @@ const MyMessageBox = ({ memberName, text, unreadCount, createDate}: {memberName:
             flex: 1,
           }}/>
           <SideText
-            unreadCount={unreadCount}
+            // unreadCount={unreadCount}
             date={createDate}/>
           <div style={{
             flex: 3,
@@ -101,7 +90,7 @@ const MyMessageBox = ({ memberName, text, unreadCount, createDate}: {memberName:
     );
   };
 
-  const SideText = ({ unreadCount, date}: {unreadCount: number, date: string}) => {
+  const SideText = ({  date}: {date: string}) => {
     return (
         <div style={{
           display: 'flex',
@@ -112,7 +101,9 @@ const MyMessageBox = ({ memberName, text, unreadCount, createDate}: {memberName:
         }}>
             <div style={{
               fontSize: 10
-          }}>{unreadCount}</div>
+          }}>
+            {/* {unreadCount} */}
+            </div>
             <div style={{
               fontSize: 10
           }}>{date}</div>

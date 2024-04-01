@@ -11,7 +11,6 @@ export interface ChatRoom {
   chatRoomName: string;
   messages: Message[];
   chattersCount: number;
-  unReadCount: number;
 }
 
 export interface LatestMessage {
@@ -25,7 +24,6 @@ export interface Message {
     chatRoomId: number;
     memberNo: number;
     memberName: string;
-    readerNos: number[];
     text: string;
     createdate: string;
 }

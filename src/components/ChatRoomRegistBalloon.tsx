@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import Popover from '@mui/material/Popover';
 import { Checkbox, FormControlLabel, Typography, Container } from '@mui/material';
 import { postChatRoom} from '../apis/chatApi';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from '../context/ChatContext';
 
 interface ChatRoomRegistBalloonProps {
   anchorEl: HTMLElement | null;
@@ -19,7 +19,7 @@ const ChatRoomRegistBalloon: React.FC<ChatRoomRegistBalloonProps> = ({ anchorEl,
     ]);
     const [checkedFriends, setCheckedFriends] = useState<number[]>([]);
     const [chatRoomName, setChatRoomName] = useState<string>('');
-    const { chatRoomId, setChatRoomId } = useChatContext();
+    const { currentChatRoom, setCurrentChatRoom } = useChatContext();
 
     const handleItemChange = (itemId: number) => {
     setFriends(prevFriends =>
@@ -54,7 +54,8 @@ const ChatRoomRegistBalloon: React.FC<ChatRoomRegistBalloonProps> = ({ anchorEl,
         if(chatRoom==null){
             return;
         }
-        setChatRoomId(chatRoom.chatRoomId);
+        currentChatRoom.chatRoomId(chatRoom.chatRoomId);
+        setCurrentChatRoom(currentChatRoom);
         onClose();
     };
 

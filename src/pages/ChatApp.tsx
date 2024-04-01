@@ -2,8 +2,8 @@ import React, { useEffect, useState, createContext, useContext } from 'react';
 import ChatRoomList from '../components/ChatRoomList';
 import ChatRoomComponent from '../components/ChatRoomComponent';
 import ChatTopBar from '../components/ChatTopBar';
-import { ChatProvider } from '../components/ChatContext';
-import { WebSocketProvider } from '../components/WebSocketContext';
+import { ChatProvider } from '../context/ChatContext';
+import { WebSocketProvider } from '../context/WebSocketContext';
 import '../components/Message.css'; // 스타일 파일을 따로 생성
 
 const ChatApp: React.FC = () => {

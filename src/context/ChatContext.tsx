@@ -6,24 +6,16 @@ interface MyComponentProps {
 }
 
 interface ChatContextState {
-    chatRoomId: number;
-    chatRoomName: string;
-    chattersCount: number;
+    currentChatRoom: ChatRoom;
     chatRooms: ChatRoom[];
-    setChatRoomId: (newChatRoomId: number) => void;
-    setChatRoomName: (newChatRoomName: string) => void;
-    setChattersCount: (newChattersCount: number) => void;
+    setCurrentChatRoom: (newChatRoom: ChatRoom) => void; 
     setChatRooms: (newChatRooms: ChatRoom[]) => void;
 }
 
 const ChatContext = createContext<ChatContextState>({
-    chatRoomId: 0,
-    chatRoomName: "",
-    chattersCount: 0,
+    currentChatRoom: {chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[], unReadCount:0},
     chatRooms: [],
-    setChatRoomId: () => {},
-    setChatRoomName: () => {},
-    setChattersCount: () => {},
+    setCurrentChatRoom: () => {},
     setChatRooms: () => {}
 });
 
@@ -32,29 +24,21 @@ const ChatProvider: React.FC<MyComponentProps> = ({ children }) => {
   const [chatRoomName, setChatRoomName] = useState<string>("");
   const [chattersCount, setChattersCount] = useState<number>(0);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+  const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[], unReadCount:0});
 
-  const updateChatRoomId = (newChatRoomId: number) => {
-    setChatRoomId(newChatRoomId);
+ 
+  const updateCurrentChatRoom = (newChatRoomSummary: ChatRoom) => {
+    setCurrentChatRoom(newChatRoomSummary);
   };
 
-  const updateChatRoomName = (newChatRoomName: string) => {
-    setChatRoomName(newChatRoomName);
-  };
-
-  const updateChattersCount = (newChattersCount: number) => {
-    setChattersCount(newChattersCount);
-  };
-  
   const updateChatRooms = (newChatRooms: ChatRoom[]) => {
     setChatRooms(newChatRooms);
   };
 
   return (
     <ChatContext.Provider value={{
-       chatRoomId, chatRoomName, chattersCount, chatRooms,
-       setChatRoomId: updateChatRoomId, 
-       setChatRoomName: updateChatRoomName,
-       setChattersCount: updateChattersCount,
+       currentChatRoom, chatRooms,
+       setCurrentChatRoom: updateCurrentChatRoom,
        setChatRooms: updateChatRooms}}>
       {children}
     </ChatContext.Provider>

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate} from 'react-router-dom';
 import { signIn } from '../apis/MemberApi';
-import { useGlobal } from '../components/GlobalContext';
+import { useGlobal } from '../context/GlobalContext';
 
 // 상태 타입 정의
 interface LoginFormState {

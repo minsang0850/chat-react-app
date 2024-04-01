@@ -4,7 +4,9 @@ import { Client, IMessage } from '@stomp/stompjs';
 import { getChatRoomData,ChatRoom, ChatRoomWithMessages, Message, Member } from '../apis/chatApi';
 import Messages from './Messages';
 import {TextField, Button} from '@mui/material';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from '../context/ChatContext';
+import { useWebSocket } from '../context/WebSocketContext';
+import { useGlobal } from '../context/GlobalContext';
 
 class RequestMessage{
   chatRoomId: number;
@@ -32,93 +34,37 @@ class EnterData {
 
 const ChatRoomComponent: React.FC = () => {
 
-    const memberNo = 1;
-    const { chatRoomId, setChatRoomId } = useChatContext();
-    const [stompClient, setStompClient] = useState<Client | null>(null);
-    const [chatRoomData, setChatRoomData] = useState<ChatRoomWithMessages>();
+    const {client} = useWebSocket();
     const [messages, setMessages] = useState<Message[]>([]);
-    const [chatRoom, setChatRoom] = useState<ChatRoom>();
-    const [member, setMember] = useState<Member>();
+    const { user, updateUser } = useGlobal();
+    const [memberNo, setMemberNo] = useState<number>(0);
     const [memberName, setMemberName] = useState<string>('');
     const [inputText, setInputText] = useState<string>('');
-    const [chattersCount, setChattersCount] = useState<number>(0);
+    const {currentChatRoom, setCurrentChatRoom} = useChatContext();
 
       useEffect(() => {
-      
-        const socket = new SockJS('http://localhost:8080/stomp/chat');
-        const stompClient = new Client({ webSocketFactory: () => socket });
-    
-        stompClient.onConnect = () => {
-          console.log('웹소켓 연결 - chatRoomId: '+ chatRoomId);
-          stompClient.subscribe('/sub/chat/room/'+chatRoomId, (message: IMessage) => {
-            const receiveMessage = JSON.parse(message.body) as Message;
-            addMessage(receiveMessage)
-          });
-          stompClient.subscribe('/sub/chat/enter', (message: IMessage) => {
-            const receiveMessage = JSON.parse(message.body) as Message;
-            addReaderNo(receiveMessage.memberNo);
-          });
-          enterChatRoom(stompClient);
-        };
-    
-        stompClient.activate();
-        setStompClient(stompClient);
-    
-        if(chatRoomId===0){
+        if(user==undefined || user==null){
           return;
         }
-        getChatRoomData(chatRoomId, memberNo)
-        .then(data=>{
-          console.log(data);
-            setChatRoomData(data);
-        })
-        .catch(error => {
-          console.error('API 호출 오류:', error);
-        });
+        setMemberName(user.memberName);
+      }, [user]);
 
-        return () => {
-          stompClient.deactivate();
-        };
-      }, [chatRoomId]);
-
-      useEffect(() => {
-        if(chatRoomData==undefined || chatRoomData==null){
-          return;
-        }
-        setChatRoom(chatRoomData.chatRoom);
-        setMessages(chatRoomData.messages);
-        setMember(chatRoomData.member);
-      }, [chatRoomData]);
-
-      useEffect(() => {
-        if(chatRoom==undefined || chatRoom==null){
-          return;
-        }
-        setChattersCount(chatRoom.chattersCount);
-      }, [chatRoom]);
-    
-      useEffect(() => {
-        if(member==undefined || member==null){
-          return;
-        }
-        setMemberName(member.memberName);
-      }, [member]);
-
-      const enterChatRoom = (stompClient:Client) => {
-        if (stompClient && stompClient.connected) {
-          console.log("enter chat room");
-          const destination = '/pub/chat/enter';
-          const requestData = new EnterData(chatRoomId, memberNo);
-          stompClient.publish({ destination, body: JSON.stringify(requestData) });
-        }
-      };
+      // const enterChatRoom = (stompClient:Client) => {
+      //   if (stompClient && stompClient.connected) {
+      //     console.log("enter chat room");
+      //     const destination = '/pub/chat/enter';
+      //     const requestData = new EnterData(currentChatRoom.chatRoomId, memberNo);
+      //     stompClient.publish({ destination, body: JSON.stringify(requestData) });
+      //   }
+      // };
 
       const sendMessage = () => {
-        if (stompClient && stompClient.connected) {
+        if (client && client.connected) {
           const destination = '/pub/chat/message';
-          const requestData = new RequestMessage(chatRoomId, memberNo, memberName, inputText);
-          console.log(requestData);
-          stompClient.publish({ destination, body: JSON.stringify(requestData) });
+          const requestData = new RequestMessage(currentChatRoom.chatRoomId, memberNo, memberName, inputText);
+          console.log('send message: ' + requestData);
+          client.publish({ destination, body: JSON.stringify(requestData) });
+          addMessage({chatRoomId: currentChatRoom.chatRoomId, memberNo:memberNo , memberName:memberName , text:inputText , createdate: ''});
           setInputText('');
         }
       };
@@ -127,25 +73,15 @@ const ChatRoomComponent: React.FC = () => {
         setMessages(prevMessages => [...prevMessages, reveivedMessage]);
       }
 
-      const addReaderNo = (readerNo: number) => {
-        const updatedMessages = [...messages];
-        updatedMessages.map(message=>{
-            if(!message.readerNos.includes(readerNo)){
-              message.readerNos.push(readerNo);
-            }
-        })
-        setMessages(updatedMessages);
-      }
-
       return (
-        chatRoomId!=0 ?
+        currentChatRoom.chatRoomId!=0 ?
         <div
         style={{ display: 'flex', flexDirection: 'column', flex: '1', overflow: 'scroll'}}
           >
             <Messages
-              messages={messages}
+              messages={currentChatRoom.messages}
               currentMemberNo={memberNo}
-              chattersCount={chattersCount}
+              chattersCount={currentChatRoom.chattersCount}
             />
       <div style={{ 
         height: '60px',

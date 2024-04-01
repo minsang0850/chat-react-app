@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React from 'react';
 import LoginForm from './pages/LoginForm';
 import SignUpForm from './pages/SignUpForm';
-import { GlobalProvider } from './components/GlobalContext';
+import { GlobalProvider } from './context/GlobalContext';
 
 function App() {
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, createContext, useContext } from 'react';
-import { useChatContext } from './ChatContext';
+import { useChatContext } from '../context/ChatContext';
 import ChatRoomRegistBalloon from './ChatRoomRegistBalloon';
 import ChatRoomExitBalloon from './ChatRoomExitBalloon';
 import {IconButton} from '@mui/material';
@@ -16,14 +16,15 @@ interface ChatTopBarProps {
 
 const ChatTopBar: React.FC<ChatTopBarProps> = ({visible, handleBanner}) => {
 
-    const { chatRoomId, setChatRoomId } = useChatContext();
-    const { chatRoomName, setChatRoomName } = useChatContext();
-    const { chattersCount, setChattersCount } = useChatContext();
+    // const { chatRoomId, setChatRoomId } = useChatContext();
+    // const { chatRoomName, setChatRoomName } = useChatContext();
+    // const { chattersCount, setChattersCount } = useChatContext();
+    const {currentChatRoom, setCurrentChatRoom} = useChatContext();
     const [roomRegistAnchor, setRoomRegistAnchor] = useState<HTMLElement | null>(null);
     const [roomExitAnchor, setRoomExitAnchor] = useState<HTMLElement | null>(null);
 
     const goBack = () => {
-        setChatRoomId(0);
+        setCurrentChatRoom({chatRoomId: 0, chatRoomName: '', chattersCount: 0});
     };
 
     const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -63,16 +64,16 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({visible, handleBanner}) => {
             {visible?<ArrowDropDownIcon sx={{ fontSize: 40 }}/>
             : <ArrowDropUpIcon sx={{ fontSize: 40 }}/>}
         </IconButton>
-        {chatRoomId ===0?<div></div>:
+        {currentChatRoom.chatRoomId ===0?<div></div>:
         <div style={{
             display: 'flex', 
             justifyContent: 'center',
             alignItems: 'end'
         }}>
-            <div style={{fontWeight: 'bold', fontSize: '20px'}}>{chatRoomName}</div>
-            <div style={{fontSize: '13px'}}>{chattersCount+'명'}</div>
+            <div style={{fontWeight: 'bold', fontSize: '20px'}}>{currentChatRoom.chatRoomName}</div>
+            <div style={{fontSize: '13px'}}>{currentChatRoom.chattersCount+'명'}</div>
         </div>}
-        {chatRoomId ===0?
+        {currentChatRoom.chatRoomId ===0?
         <IconButton onClick={handleClickAdd}>
             <AddBoxIcon/>
         </IconButton>
