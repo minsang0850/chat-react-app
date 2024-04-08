@@ -21,16 +21,16 @@ const ChatApp: React.FC = () => {
       // borderRadius: '30px',
       // border: '1px solid black'}}
       >
-        <WebSocketProvider>
         <ChatProvider>
+        <WebSocketProvider>
           <ChatTopBar
           visible={isBannerVisible}
           handleBanner={handleBanner}
           />
           <ChatRoomList />
           <ChatRoomComponent />
-        </ChatProvider>
         </WebSocketProvider>
+        </ChatProvider>
       </div>
   );
 };

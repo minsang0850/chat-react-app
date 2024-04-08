@@ -53,8 +53,6 @@ export async function getChatRoomList(memberNo:number): Promise<ChatRoom[]> {
     const response = await axios.get<ChatRooms>('http://localhost:8080/message/v1/chatRooms'
     , { params: {memberNo: memberNo}});
     const data = response.data as ChatRooms;
-    console.log('data:'+ data)
-    console.log('' + data.chatRoomDetails[0].chatRoomId);
     return data.chatRoomDetails;
   } catch (error) {
     throw new Error('Fail get room List API call');

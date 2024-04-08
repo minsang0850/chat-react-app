@@ -32,7 +32,6 @@ const LoginForm: React.FC = () => {
   // 폼 제출 핸들러
   const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
-    console.log('로그인 시도:', state.id, state.password);
     const member = await signIn(state.id, state.password);
     updateUser({memberNo:member.memberNo , memberName:member.memberName})
     navigate('/chat');

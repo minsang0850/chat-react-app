@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { getChatRoomList, ChatRoom, Message } from '../apis/chatApi';
 import { List, ListItem, ListItemText, ListItemAvatar, Avatar, Badge } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,7 @@ import { useChatContext } from '../context/ChatContext';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import { useGlobal } from '../context/GlobalContext';
+import { ChatContext } from '../context/ChatContext';
 
 const ChatRoomList = (
   // {memberNo }: {memberNo: number }
@@ -13,9 +14,9 @@ const ChatRoomList = (
     // const { chatRoomId, setChatRoomId } = useChatContext();
     // const { chatRoomName, setChatRoomName } = useChatContext();
     // const { chattersCount, setChattersCount } = useChatContext();
-    const {currentChatRoom, setCurrentChatRoom} = useChatContext();
-    const { chatRooms, setChatRooms } = useChatContext();
-    const [clients, setClients] = useState<Client[]>([]);
+    const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+    const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[]});
+    const chatContext = useContext(ChatContext);
     const { user, updateUser } = useGlobal();
     const navigate = useNavigate();
 
@@ -25,13 +26,21 @@ const ChatRoomList = (
       }
         getChatRoomList(user.memberNo)
         .then(data=>{
-            console.log(data);
             setChatRooms(data);
             })
             .catch(error => {
               console.error('API 호출 오류:', error);
             });
     }, [user]);
+
+    useEffect(() => {
+      if(chatContext==null){
+        return;
+      }
+      setCurrentChatRoom(chatContext.currentChatRoom);
+      setChatRooms(chatContext.chatRooms);
+    }, [chatContext]);
+
   
   //   useEffect(() => {
   //     if(chatRooms.length==0){
@@ -73,7 +82,9 @@ const ChatRoomList = (
       const handleChatRoomClick = (room: ChatRoom) => {
     // 클릭한 채팅방의 id를 받아와 URL을 구성하고 해당 URL로 이동함
     //navigate(`/chat/chatRooms/${roomId}/members/${memberNo}`);
-    setCurrentChatRoom(room)
+    
+    console.log('currentChatRoom id:' + currentChatRoom.chatRoomId)
+    chatContext.setCurrentChatRoom(room);
     // setChatRoomId(room.chatRoomId);
     // setChatRoomName(room.chatRoomName);
     // setChattersCount(room.chattersCount);

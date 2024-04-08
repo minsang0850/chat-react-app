@@ -54,7 +54,7 @@ const ChatRoomRegistBalloon: React.FC<ChatRoomRegistBalloonProps> = ({ anchorEl,
         if(chatRoom==null){
             return;
         }
-        currentChatRoom.chatRoomId(chatRoom.chatRoomId);
+        currentChatRoom.chatRoomId=chatRoom.chatRoomId;
         setCurrentChatRoom(currentChatRoom);
         onClose();
     };

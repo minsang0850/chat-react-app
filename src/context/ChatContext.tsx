@@ -12,8 +12,8 @@ interface ChatContextState {
     setChatRooms: (newChatRooms: ChatRoom[]) => void;
 }
 
-const ChatContext = createContext<ChatContextState>({
-    currentChatRoom: {chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[], unReadCount:0},
+export const ChatContext = createContext<ChatContextState>({
+    currentChatRoom: {chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[]},
     chatRooms: [],
     setCurrentChatRoom: () => {},
     setChatRooms: () => {}
@@ -24,11 +24,12 @@ const ChatProvider: React.FC<MyComponentProps> = ({ children }) => {
   const [chatRoomName, setChatRoomName] = useState<string>("");
   const [chattersCount, setChattersCount] = useState<number>(0);
   const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
-  const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[], unReadCount:0});
+  const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[]});
 
  
   const updateCurrentChatRoom = (newChatRoomSummary: ChatRoom) => {
     setCurrentChatRoom(newChatRoomSummary);
+    console.log('update messages: ' + newChatRoomSummary.messages.length)
   };
 
   const updateChatRooms = (newChatRooms: ChatRoom[]) => {

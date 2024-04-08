@@ -12,13 +12,12 @@ const GlobalContext = createContext<GlobalState | undefined>(undefined);
 // 3. Provider 컴포넌트 구현
 export const GlobalProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   const [user, setUser] = useState<{ memberNo: number; memberName: string } | null>(null);
+  
 
   const updateUser = (newUser: { memberNo: number; memberName: string } | null) => {
     if(newUser==null){
-      console.log('newUser is null');
       return; 
     }
-    console.log("globalContext updateUser - memberNo:"+ newUser.memberNo );
     setUser(newUser);
   };
 

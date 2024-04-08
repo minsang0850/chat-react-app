@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import { getChatRoomData,ChatRoom, ChatRoomWithMessages, Message, Member } from '../apis/chatApi';
@@ -7,6 +7,7 @@ import {TextField, Button} from '@mui/material';
 import { useChatContext } from '../context/ChatContext';
 import { useWebSocket } from '../context/WebSocketContext';
 import { useGlobal } from '../context/GlobalContext';
+import { ChatContext } from '../context/ChatContext';
 
 class RequestMessage{
   chatRoomId: number;
@@ -40,14 +41,35 @@ const ChatRoomComponent: React.FC = () => {
     const [memberNo, setMemberNo] = useState<number>(0);
     const [memberName, setMemberName] = useState<string>('');
     const [inputText, setInputText] = useState<string>('');
-    const {currentChatRoom, setCurrentChatRoom} = useChatContext();
-
+    const [chatRooms, setChatRooms] = useState<ChatRoom[]>([]);
+    const [currentChatRoom, setCurrentChatRoom] = useState<ChatRoom>({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages:[]});
+    const chatContext = useContext(ChatContext);
+    
       useEffect(() => {
         if(user==undefined || user==null){
           return;
         }
         setMemberName(user.memberName);
+        setMemberNo(user.memberNo);
       }, [user]);
+
+      useEffect(() => {
+        if(currentChatRoom==null){
+          return;
+        }
+        console.log('currentChatRoom Id: ' + currentChatRoom.chatRoomId)
+      }, [currentChatRoom]);
+
+      useEffect(() => {
+        if(chatContext==null){
+          return;
+        }
+        setCurrentChatRoom(chatContext.currentChatRoom);
+        setChatRooms(chatContext.chatRooms);
+        console.log('chatContext.currentChatRoom:' + chatContext.currentChatRoom.chatRoomId)
+      }, [chatContext]);
+
+
 
       // const enterChatRoom = (stompClient:Client) => {
       //   if (stompClient && stompClient.connected) {

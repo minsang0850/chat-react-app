@@ -24,7 +24,7 @@ const ChatTopBar: React.FC<ChatTopBarProps> = ({visible, handleBanner}) => {
     const [roomExitAnchor, setRoomExitAnchor] = useState<HTMLElement | null>(null);
 
     const goBack = () => {
-        setCurrentChatRoom({chatRoomId: 0, chatRoomName: '', chattersCount: 0});
+        setCurrentChatRoom({chatRoomId: 0, chatRoomName: '', chattersCount: 0, messages: []});
     };
 
     const handleClickAdd = (event: React.MouseEvent<HTMLButtonElement>) => {

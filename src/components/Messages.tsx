@@ -13,6 +13,7 @@ const Messages = ({ messages, currentMemberNo, chattersCount }: { messages: Mess
     if(messageEndRef.current!=null){
       messageEndRef.current.scrollIntoView();
     }
+    console.log('messages 개수 변화: ' + messages.length)
   }, [messages]);
 
     let renderMessage = (message: Message) => {
@@ -35,7 +36,7 @@ const Messages = ({ messages, currentMemberNo, chattersCount }: { messages: Mess
 }
 
 
-const MyMessageBox = ({ memberName, text, createDate}: {memberName: string, text: string, unreadCount:number, createDate:string}) => {
+const MyMessageBox = ({ memberName, text, createDate}: {memberName: string, text: string, createDate:string}) => {
     return (
         <div style={{
           display: 'flex',
